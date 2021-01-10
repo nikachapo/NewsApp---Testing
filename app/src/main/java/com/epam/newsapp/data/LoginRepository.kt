@@ -14,8 +14,14 @@ class LoginRepository private constructor(private val dataSource: LoginDataSourc
 
     val user: StateFlow<LoggedInUser?> = _user
 
-    val isLoggedIn: Boolean
-        get() = _user.value != null
+    suspend fun isLoggedIn(): Boolean {
+        val result = dataSource.checkUserLogin()
+        if (result is Result.Success) {
+            _user.value = result.data
+            return true
+        }
+        return false
+    }
 
     suspend fun logout() = withContext(Dispatchers.Default) {
         _user.value = null
@@ -33,7 +39,7 @@ class LoginRepository private constructor(private val dataSource: LoginDataSourc
             result
         }
 
-    fun setLoggedInUser(loggedInUser: LoggedInUser) {
+    private fun setLoggedInUser(loggedInUser: LoggedInUser) {
         this._user.value = loggedInUser
     }
 

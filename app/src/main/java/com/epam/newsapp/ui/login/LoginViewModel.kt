@@ -8,14 +8,13 @@ import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.viewModelScope
 import com.epam.newsapp.NewsApplication
 import com.epam.newsapp.R
-import com.epam.newsapp.SharedPreferencesUtil
 import com.epam.newsapp.data.LoginRepository
 import com.epam.newsapp.data.Result
-import com.epam.newsapp.data.model.LoggedInUser
 import com.epam.newsapp.ui.login.models.LoggedInUserView
 import com.epam.newsapp.ui.login.models.LoginFormState
 import com.epam.newsapp.ui.login.models.LoginResult
 import kotlinx.coroutines.ExperimentalCoroutinesApi
+import kotlinx.coroutines.flow.collect
 import kotlinx.coroutines.launch
 
 @ExperimentalCoroutinesApi
@@ -24,7 +23,6 @@ class LoginViewModel constructor(
     application: Application
 ) : AndroidViewModel(application) {
 
-    private val sharedPreferencesUtil = (getApplication<NewsApplication>()).sharedPreferencesUtil
     private val userSession = (getApplication<NewsApplication>()).userSession
 
     private val _loginForm = MutableLiveData<LoginFormState>()
@@ -38,8 +36,6 @@ class LoginViewModel constructor(
             val result = loginRepository.login(username, password)
 
             if (result is Result.Success) {
-                sharedPreferencesUtil.putString(SharedPreferencesUtil.KEY_NAME, username)
-                sharedPreferencesUtil.putString(SharedPreferencesUtil.KEY_UID, result.data.userId)
                 _loginResult.value =
                     LoginResult(success = LoggedInUserView(displayName = result.data.displayName))
             } else {
@@ -82,20 +78,13 @@ class LoginViewModel constructor(
 
     fun checkUserLogin() {
         viewModelScope.launch {
-            val hasToken =
-                sharedPreferencesUtil.getString(SharedPreferencesUtil.KEY_TOKEN).isNullOrEmpty()
-                    .not()
-
-            if (hasToken) {
-                val uid = sharedPreferencesUtil.getString(SharedPreferencesUtil.KEY_UID)
-                val displayName = sharedPreferencesUtil.getString(SharedPreferencesUtil.KEY_NAME)
-                if (uid != null && displayName != null) {
-                    loginRepository.setLoggedInUser(LoggedInUser(uid, displayName))
-                    _loginResult.value =
-                        LoginResult(success = LoggedInUserView(displayName = displayName))
+            if (loginRepository.isLoggedIn()) {
+                loginRepository.user.collect {
+                    if (it == null) return@collect
+                    _loginResult.value = LoginResult(success = LoggedInUserView(displayName = it.displayName))
                 }
             }
-
         }
     }
+
 }
