@@ -11,8 +11,8 @@ import java.io.IOException
 class LoginDataSource(private val sharedPreferencesUtil: SharedPreferencesUtil) {
 
     suspend fun checkUserLogin(): Result<LoggedInUser> = withContext(Dispatchers.IO) {
-        val hasToken = sharedPreferencesUtil
-            .getString(SharedPreferencesUtil.KEY_TOKEN).isNullOrEmpty().not()
+        val hasToken = !sharedPreferencesUtil
+            .getString(SharedPreferencesUtil.KEY_TOKEN).isNullOrEmpty()
         if (hasToken) {
             val uid = sharedPreferencesUtil.getString(SharedPreferencesUtil.KEY_UID)
             val displayName = sharedPreferencesUtil.getString(SharedPreferencesUtil.KEY_NAME)
@@ -41,6 +41,8 @@ class LoginDataSource(private val sharedPreferencesUtil: SharedPreferencesUtil) 
         }
 
     suspend fun logout() {
-        delay(2000)
+        withContext(Dispatchers.IO) {
+            sharedPreferencesUtil.putString(SharedPreferencesUtil.KEY_TOKEN, null)
+        }
     }
 }

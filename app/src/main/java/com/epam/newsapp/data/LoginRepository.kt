@@ -10,11 +10,14 @@ import kotlinx.coroutines.withContext
 @ExperimentalCoroutinesApi
 class LoginRepository private constructor(private val dataSource: LoginDataSource) {
 
+    private var userIsLoggedOut = false
+
     private val _user = MutableStateFlow<LoggedInUser?>(null)
 
     val user: StateFlow<LoggedInUser?> = _user
 
     suspend fun isLoggedIn(): Boolean {
+        if (userIsLoggedOut) return false
         val result = dataSource.checkUserLogin()
         if (result is Result.Success) {
             _user.value = result.data
@@ -23,9 +26,13 @@ class LoginRepository private constructor(private val dataSource: LoginDataSourc
         return false
     }
 
-    suspend fun logout() = withContext(Dispatchers.Default) {
-        _user.value = null
-        dataSource.logout()
+    suspend fun logout() {
+        userIsLoggedOut = true
+        setLoggedInUser(null)
+        withContext(Dispatchers.Default) {
+            _user.value = null
+            dataSource.logout()
+        }
     }
 
     suspend fun login(username: String, password: String): Result<LoggedInUser> =
@@ -39,7 +46,7 @@ class LoginRepository private constructor(private val dataSource: LoginDataSourc
             result
         }
 
-    private fun setLoggedInUser(loggedInUser: LoggedInUser) {
+    fun setLoggedInUser(loggedInUser: LoggedInUser?) {
         this._user.value = loggedInUser
     }
 

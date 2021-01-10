@@ -26,15 +26,15 @@ class UserSession(private val sharedPreferencesUtil: SharedPreferencesUtil) {
             )
             val sessionTimeMillis = SESSION_TIME_M.toMillis()
             delay(sessionTimeMillis)
-            _userSessionExpired.value = true
-
             /**
              * clear token after SESSION_TIME_M minutes
              */
             sharedPreferencesUtil.putString(
                 SharedPreferencesUtil.KEY_TOKEN,
-                ""
+                null
             )
+            _userSessionExpired.value = true
+
         }
     }
 

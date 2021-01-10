@@ -9,7 +9,7 @@ class SharedPreferencesUtil(context: Context) {
     private val preferences = context.getSharedPreferences("token", Context.MODE_PRIVATE)
     private val editor = preferences.edit()
 
-    suspend fun putString(key: String, value: String): Unit = withContext(Dispatchers.IO) {
+    suspend fun putString(key: String, value: String?): Unit = withContext(Dispatchers.IO) {
         editor.putString(key, value)
         editor.commit()
     }
