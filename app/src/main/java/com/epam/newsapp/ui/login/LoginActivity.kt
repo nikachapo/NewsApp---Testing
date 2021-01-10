@@ -14,10 +14,8 @@ import androidx.annotation.StringRes
 import androidx.appcompat.app.AppCompatActivity
 import androidx.lifecycle.Observer
 import androidx.lifecycle.ViewModelProvider
-import com.epam.newsapp.BaseActivity
 import com.epam.newsapp.NewsApplication
 import com.epam.newsapp.R
-import com.epam.newsapp.UserSession
 import com.epam.newsapp.ui.news.NewsActivity
 import kotlinx.coroutines.ExperimentalCoroutinesApi
 
@@ -29,15 +27,18 @@ class LoginActivity : AppCompatActivity(R.layout.activity_login) {
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
 
+        val loginRepository = (application as NewsApplication).loginRepository
+        loginViewModel =
+            ViewModelProvider(this, LoginViewModelFactory(loginRepository, application))
+                .get(LoginViewModel::class.java)
+        loginViewModel.checkUserLogin()
+
         val username = findViewById<EditText>(R.id.username)
         val password = findViewById<EditText>(R.id.password)
         val login = findViewById<Button>(R.id.login)
         val loading = findViewById<ProgressBar>(R.id.loading)
 
-        val loginRepository = (application as NewsApplication).loginRepository
 
-        loginViewModel = ViewModelProvider(this, LoginViewModelFactory(loginRepository))
-                .get(LoginViewModel::class.java)
 
         loginViewModel.loginFormState.observe(this@LoginActivity, Observer {
             val loginState = it ?: return@Observer
@@ -67,16 +68,16 @@ class LoginActivity : AppCompatActivity(R.layout.activity_login) {
 
         username.afterTextChanged {
             loginViewModel.loginDataChanged(
-                    username.text.toString(),
-                    password.text.toString()
+                username.text.toString(),
+                password.text.toString()
             )
         }
 
         password.apply {
             afterTextChanged {
                 loginViewModel.loginDataChanged(
-                        username.text.toString(),
-                        password.text.toString()
+                    username.text.toString(),
+                    password.text.toString()
                 )
             }
 
@@ -84,8 +85,8 @@ class LoginActivity : AppCompatActivity(R.layout.activity_login) {
                 when (actionId) {
                     EditorInfo.IME_ACTION_DONE ->
                         loginViewModel.login(
-                                username.text.toString(),
-                                password.text.toString()
+                            username.text.toString(),
+                            password.text.toString()
                         )
                 }
                 false
@@ -99,7 +100,7 @@ class LoginActivity : AppCompatActivity(R.layout.activity_login) {
     }
 
     private fun onLoginSuccess() {
-        UserSession.startSession()
+        loginViewModel.startUserSession()
         startActivity(Intent(this, NewsActivity::class.java))
         finish()
     }

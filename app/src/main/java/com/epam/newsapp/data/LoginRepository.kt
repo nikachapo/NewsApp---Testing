@@ -33,7 +33,7 @@ class LoginRepository private constructor(private val dataSource: LoginDataSourc
             result
         }
 
-    private fun setLoggedInUser(loggedInUser: LoggedInUser) {
+    fun setLoggedInUser(loggedInUser: LoggedInUser) {
         this._user.value = loggedInUser
     }
 

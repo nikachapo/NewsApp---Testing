@@ -1,20 +1,11 @@
 package com.epam.newsapp.ui.news
 
-import android.content.Intent
 import android.os.Bundle
 import android.view.MenuItem
 import android.widget.FrameLayout
-import android.widget.Toast
-import androidx.appcompat.app.AppCompatActivity
-import androidx.lifecycle.lifecycleScope
-import com.epam.newsapp.BaseActivity
-import com.epam.newsapp.NewsApplication
+import com.epam.newsapp.ui.BaseActivity
 import com.epam.newsapp.R
-import com.epam.newsapp.data.LoginRepository
-import com.epam.newsapp.ui.login.LoginActivity
 import kotlinx.coroutines.ExperimentalCoroutinesApi
-import kotlinx.coroutines.flow.collect
-import kotlinx.coroutines.launch
 
 @ExperimentalCoroutinesApi
 class NewsActivity : BaseActivity(R.layout.activity_news) {

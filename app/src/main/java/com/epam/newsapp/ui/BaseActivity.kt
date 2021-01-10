@@ -1,4 +1,4 @@
-package com.epam.newsapp
+package com.epam.newsapp.ui
 
 import android.content.Intent
 import android.os.Bundle
@@ -6,6 +6,9 @@ import android.widget.Toast
 import androidx.annotation.LayoutRes
 import androidx.appcompat.app.AppCompatActivity
 import androidx.lifecycle.lifecycleScope
+import com.epam.newsapp.NewsApplication
+import com.epam.newsapp.R
+import com.epam.newsapp.UserSession
 import com.epam.newsapp.data.LoginRepository
 import com.epam.newsapp.ui.login.LoginActivity
 import kotlinx.coroutines.ExperimentalCoroutinesApi
@@ -16,19 +19,15 @@ import kotlinx.coroutines.launch
 abstract class BaseActivity(@LayoutRes contentLayoutId: Int) : AppCompatActivity(contentLayoutId) {
 
     private lateinit var loginRepository: LoginRepository
+    private lateinit var userSession: UserSession
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         loginRepository = (application as NewsApplication).loginRepository
+        userSession = (application as NewsApplication).userSession
         lifecycleScope.launch {
             loginRepository.user.collect { loggedInUser ->
-                if (loggedInUser == null) {
-                    Toast.makeText(
-                        applicationContext,
-                        getString(R.string.logged_out_automatically),
-                        Toast.LENGTH_SHORT
-                    ).show()
-                } else {
+                if (loggedInUser != null) {
                     Toast.makeText(
                         applicationContext,
                         "${getString(R.string.welcome)} ${loggedInUser.displayName}",
@@ -39,7 +38,7 @@ abstract class BaseActivity(@LayoutRes contentLayoutId: Int) : AppCompatActivity
         }
 
         lifecycleScope.launch {
-            UserSession.userSessionExpired.collect { sessionExpired ->
+            userSession.userSessionExpired.collect { sessionExpired ->
                 if (sessionExpired) {
                     logOut()
                 }
@@ -49,7 +48,7 @@ abstract class BaseActivity(@LayoutRes contentLayoutId: Int) : AppCompatActivity
 
     override fun onUserInteraction() {
         super.onUserInteraction()
-        UserSession.startSession()
+        userSession.startSession()
     }
 
     protected fun logOut() {
