@@ -2,6 +2,7 @@ package com.epam.newsapp.ui.login
 
 import android.app.Application
 import android.util.Patterns
+import androidx.annotation.VisibleForTesting
 import androidx.lifecycle.AndroidViewModel
 import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
@@ -33,7 +34,6 @@ class LoginViewModel constructor(
     fun login(username: String, password: String) {
         viewModelScope.launch {
             val result = loginRepository.login(username, password)
-
             if (result is Result.Success) {
                 _loginResult.value =
                     LoginResult(success = LoggedInUserView(displayName = result.data.displayName))
@@ -59,7 +59,8 @@ class LoginViewModel constructor(
         }
     }
 
-    private fun isUserNameValid(username: String): Boolean {
+    @VisibleForTesting
+    fun isUserNameValid(username: String): Boolean {
         return if (username.contains('@')) {
             Patterns.EMAIL_ADDRESS.matcher(username).matches()
         } else {
@@ -67,7 +68,8 @@ class LoginViewModel constructor(
         }
     }
 
-    private fun isPasswordValid(password: String): Boolean {
+    @VisibleForTesting
+    fun isPasswordValid(password: String): Boolean {
         return password.length > 5
     }
 

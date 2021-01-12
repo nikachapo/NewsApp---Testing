@@ -43,6 +43,7 @@ class UserSession(
     }
 
     fun stopSession() {
+        _userSessionExpired.value = true
         sessionTimeCountJob?.cancel()
     }
 

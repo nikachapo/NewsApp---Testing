@@ -34,4 +34,13 @@ class UserSessionTest : BaseCoroutinesTest() {
             assertThat(userSession.userSessionExpired.value, `is`(true))
         }
     }
+
+    @Test
+    fun stopSession() {
+        mainCoroutineRule.runBlockingTest {
+            assertThat(userSession.userSessionExpired.value, `is`(false))
+            userSession.stopSession()
+            assertThat(userSession.userSessionExpired.value, `is`(true))
+        }
+    }
 }
