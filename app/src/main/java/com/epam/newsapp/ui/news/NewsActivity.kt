@@ -3,7 +3,10 @@ package com.epam.newsapp.ui.news
 import android.os.Bundle
 import android.view.MenuItem
 import android.widget.FrameLayout
+import androidx.lifecycle.ViewModelProvider
 import androidx.lifecycle.lifecycleScope
+import androidx.recyclerview.widget.RecyclerView
+import com.epam.newsapp.NewsApplication
 import com.epam.newsapp.ui.BaseActivity
 import com.epam.newsapp.R
 import kotlinx.coroutines.ExperimentalCoroutinesApi
@@ -14,8 +17,13 @@ class NewsActivity : BaseActivity(R.layout.activity_news) {
 
     private var isFullscreen: Boolean = false
 
+    private lateinit var viewModel:NewsViewModel
+
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
+
+        val newsViewModelFactory = NewsViewModelFactory((application as NewsApplication).newsRepo)
+        viewModel = ViewModelProvider(this, newsViewModelFactory).get(NewsViewModel::class.java)
 
         val root = findViewById<FrameLayout>(R.id.root)
         supportActionBar?.setDisplayHomeAsUpEnabled(true)
@@ -23,6 +31,14 @@ class NewsActivity : BaseActivity(R.layout.activity_news) {
 
         isFullscreen = true
         root.setOnClickListener { toggle() }
+
+        val newsList = findViewById<RecyclerView>(R.id.newsList)
+        val newsAdapter = NewsAdapter()
+        newsList.adapter = newsAdapter
+
+        viewModel.news.observe(this, {
+            newsAdapter.submitItem(it)
+        })
     }
 
     private fun toggle() {

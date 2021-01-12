@@ -3,7 +3,8 @@ package com.epam.newsapp.data
 import com.epam.newsapp.ISharedPreferencesUtil
 import com.epam.newsapp.common.BaseCoroutinesTest
 import com.epam.newsapp.SharedPreferencesUtil
-import com.epam.newsapp.data.model.LoggedInUser
+import com.epam.newsapp.data.login.LoginDataSource
+import com.epam.newsapp.data.login.model.LoggedInUser
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.ExperimentalCoroutinesApi
 import kotlinx.coroutines.test.runBlockingTest

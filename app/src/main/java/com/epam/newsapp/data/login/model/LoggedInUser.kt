@@ -1,4 +1,4 @@
-package com.epam.newsapp.data.model
+package com.epam.newsapp.data.login.model
 
 data class LoggedInUser(
         val userId: String,

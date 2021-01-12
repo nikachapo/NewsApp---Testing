@@ -4,9 +4,9 @@ import androidx.test.core.app.ApplicationProvider
 import com.epam.newsapp.R
 import com.epam.newsapp.common.BaseCoroutinesTest
 import com.epam.newsapp.common.getOrAwaitValue
-import com.epam.newsapp.data.LoginRepository
+import com.epam.newsapp.data.login.LoginRepository
 import com.epam.newsapp.data.Result
-import com.epam.newsapp.data.model.LoggedInUser
+import com.epam.newsapp.data.login.model.LoggedInUser
 import kotlinx.coroutines.ExperimentalCoroutinesApi
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.test.runBlockingTest

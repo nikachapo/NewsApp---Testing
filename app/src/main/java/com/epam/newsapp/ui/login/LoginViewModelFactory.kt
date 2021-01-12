@@ -3,7 +3,7 @@ package com.epam.newsapp.ui.login
 import android.app.Application
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.ViewModelProvider
-import com.epam.newsapp.data.LoginRepository
+import com.epam.newsapp.data.login.LoginRepository
 import kotlinx.coroutines.ExperimentalCoroutinesApi
 
 @ExperimentalCoroutinesApi

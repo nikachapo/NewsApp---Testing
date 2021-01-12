@@ -9,7 +9,7 @@ import androidx.lifecycle.lifecycleScope
 import com.epam.newsapp.NewsApplication
 import com.epam.newsapp.R
 import com.epam.newsapp.UserSession
-import com.epam.newsapp.data.LoginRepository
+import com.epam.newsapp.data.login.LoginRepository
 import com.epam.newsapp.ui.login.LoginActivity
 import kotlinx.coroutines.ExperimentalCoroutinesApi
 import kotlinx.coroutines.flow.collect

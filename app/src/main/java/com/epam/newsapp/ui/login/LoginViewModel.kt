@@ -7,15 +7,12 @@ import androidx.lifecycle.AndroidViewModel
 import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.viewModelScope
-import com.epam.newsapp.NewsApplication
 import com.epam.newsapp.R
-import com.epam.newsapp.data.LoginRepository
+import com.epam.newsapp.data.login.LoginRepository
 import com.epam.newsapp.data.Result
 import com.epam.newsapp.ui.login.models.LoggedInUserView
 import com.epam.newsapp.ui.login.models.LoginFormState
 import com.epam.newsapp.ui.login.models.LoginResult
-import kotlinx.coroutines.CoroutineDispatcher
-import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.ExperimentalCoroutinesApi
 import kotlinx.coroutines.flow.collect
 import kotlinx.coroutines.launch

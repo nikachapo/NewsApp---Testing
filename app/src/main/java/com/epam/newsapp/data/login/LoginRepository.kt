@@ -1,6 +1,7 @@
-package com.epam.newsapp.data
+package com.epam.newsapp.data.login
 
-import com.epam.newsapp.data.model.LoggedInUser
+import com.epam.newsapp.data.Result
+import com.epam.newsapp.data.login.model.LoggedInUser
 import kotlinx.coroutines.CoroutineDispatcher
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.ExperimentalCoroutinesApi
