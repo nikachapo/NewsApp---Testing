@@ -20,7 +20,7 @@ class NewsApplication : Application() {
     override fun onCreate() {
         super.onCreate()
         sharedPreferencesUtil = SharedPreferencesUtil(this)
-        loginRepository = LoginRepository.getInstance(LoginDataSource(sharedPreferencesUtil))
+        loginRepository = LoginRepository(LoginDataSource(sharedPreferencesUtil))
         userSession = UserSession(sharedPreferencesUtil)
     }
 }

@@ -1,19 +1,23 @@
 package com.epam.newsapp.data
 
+import com.epam.newsapp.ISharedPreferencesUtil
 import com.epam.newsapp.SharedPreferencesUtil
 import com.epam.newsapp.data.model.LoggedInUser
+import kotlinx.coroutines.CoroutineDispatcher
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.async
-import kotlinx.coroutines.delay
 import kotlinx.coroutines.withContext
 import java.io.IOException
 
-class LoginDataSource(private val sharedPreferencesUtil: SharedPreferencesUtil) {
+class LoginDataSource(
+    private val sharedPreferencesUtil: ISharedPreferencesUtil,
+    private val ioDispatcher: CoroutineDispatcher = Dispatchers.IO
+) {
 
-    suspend fun checkUserLogin(): Result<LoggedInUser> = withContext(Dispatchers.IO) {
-        val hasToken = !sharedPreferencesUtil
-            .getString(SharedPreferencesUtil.KEY_TOKEN).isNullOrEmpty()
-        if (hasToken) {
+    suspend fun checkUserLogin(): Result<LoggedInUser> {
+        val hasToken = (sharedPreferencesUtil
+            .getString(SharedPreferencesUtil.KEY_TOKEN) ?: "").isNotEmpty()
+        return if (hasToken) {
             val uid = sharedPreferencesUtil.getString(SharedPreferencesUtil.KEY_UID)
             val displayName = sharedPreferencesUtil.getString(SharedPreferencesUtil.KEY_NAME)
             if (uid != null && displayName != null) {
@@ -23,7 +27,7 @@ class LoginDataSource(private val sharedPreferencesUtil: SharedPreferencesUtil) 
     }
 
     suspend fun login(username: String, password: String): Result<LoggedInUser> =
-        withContext(Dispatchers.IO) {
+        withContext(ioDispatcher) {
             try {
                 val user = LoggedInUser(java.util.UUID.randomUUID().toString(), username)
                 val saveName = async {
@@ -41,8 +45,10 @@ class LoginDataSource(private val sharedPreferencesUtil: SharedPreferencesUtil) 
         }
 
     suspend fun logout() {
-        withContext(Dispatchers.IO) {
+        withContext(ioDispatcher) {
             sharedPreferencesUtil.putString(SharedPreferencesUtil.KEY_TOKEN, null)
+            sharedPreferencesUtil.putString(SharedPreferencesUtil.KEY_UID, null)
+            sharedPreferencesUtil.putString(SharedPreferencesUtil.KEY_NAME, null)
         }
     }
 }

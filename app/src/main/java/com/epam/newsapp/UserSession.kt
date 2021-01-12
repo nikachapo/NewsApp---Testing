@@ -1,5 +1,3 @@
-@file:Suppress("ObjectPropertyName")
-
 package com.epam.newsapp
 
 import kotlinx.coroutines.*
@@ -7,7 +5,9 @@ import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
 
 @ExperimentalCoroutinesApi
-class UserSession(private val sharedPreferencesUtil: SharedPreferencesUtil) {
+class UserSession(
+    private val sharedPreferencesUtil: ISharedPreferencesUtil
+) {
 
     private var sessionTimeCountJob: Job? = null
 
@@ -15,7 +15,7 @@ class UserSession(private val sharedPreferencesUtil: SharedPreferencesUtil) {
 
     val userSessionExpired: StateFlow<Boolean> = _userSessionExpired
 
-    fun startSession() {
+    suspend fun startSession() = coroutineScope {
         _userSessionExpired.value = false
         sessionTimeCountJob?.cancel()
 
@@ -26,6 +26,11 @@ class UserSession(private val sharedPreferencesUtil: SharedPreferencesUtil) {
             )
             val sessionTimeMillis = SESSION_TIME_M.toMillis()
             delay(sessionTimeMillis)
+
+            /**
+             * clear token after SESSION_TIME_M minutes
+             */
+
             /**
              * clear token after SESSION_TIME_M minutes
              */
@@ -34,12 +39,15 @@ class UserSession(private val sharedPreferencesUtil: SharedPreferencesUtil) {
                 null
             )
             _userSessionExpired.value = true
-
         }
     }
 
+    fun stopSession() {
+        sessionTimeCountJob?.cancel()
+    }
+
     companion object {
-        private const val SESSION_TIME_M = 1
+        const val SESSION_TIME_M = 1
     }
 }
 

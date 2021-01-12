@@ -1,6 +1,7 @@
 package com.epam.newsapp.data
 
 import com.epam.newsapp.data.model.LoggedInUser
+import kotlinx.coroutines.CoroutineDispatcher
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.ExperimentalCoroutinesApi
 import kotlinx.coroutines.flow.MutableStateFlow
@@ -8,7 +9,10 @@ import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.withContext
 
 @ExperimentalCoroutinesApi
-class LoginRepository private constructor(private val dataSource: LoginDataSource) {
+class LoginRepository(
+    private val dataSource: LoginDataSource,
+    private val defaultDispatcher: CoroutineDispatcher = Dispatchers.Default
+) {
 
     private var userIsLoggedOut = false
 
@@ -29,14 +33,11 @@ class LoginRepository private constructor(private val dataSource: LoginDataSourc
     suspend fun logout() {
         userIsLoggedOut = true
         setLoggedInUser(null)
-        withContext(Dispatchers.Default) {
-            _user.value = null
-            dataSource.logout()
-        }
+        dataSource.logout()
     }
 
     suspend fun login(username: String, password: String): Result<LoggedInUser> =
-        withContext(Dispatchers.Default) {
+        withContext(defaultDispatcher) {
             val result = dataSource.login(username, password)
 
             if (result is Result.Success) {
@@ -44,23 +45,9 @@ class LoginRepository private constructor(private val dataSource: LoginDataSourc
             }
 
             result
-        }
+        }.also { userIsLoggedOut = false }
 
-    fun setLoggedInUser(loggedInUser: LoggedInUser?) {
-        this._user.value = loggedInUser
-    }
-
-    companion object {
-
-        private var INSTANCE: LoginRepository? = null
-
-        fun getInstance(dataSource: LoginDataSource): LoginRepository {
-            if (INSTANCE == null) {
-                synchronized(this) {
-                    INSTANCE = LoginRepository(dataSource)
-                }
-            }
-            return INSTANCE!!
-        }
+    private fun setLoggedInUser(loggedInUser: LoggedInUser?) {
+        _user.value = loggedInUser
     }
 }

@@ -48,11 +48,14 @@ abstract class BaseActivity(@LayoutRes contentLayoutId: Int) : AppCompatActivity
 
     override fun onUserInteraction() {
         super.onUserInteraction()
-        userSession.startSession()
+        lifecycleScope.launch {
+            userSession.startSession()
+        }
     }
 
-    protected fun logOut() {
-        lifecycleScope.launch { loginRepository.logout() }
+    protected suspend fun logOut() {
+        userSession.stopSession()
+        loginRepository.logout()
         startActivity(Intent(this, LoginActivity::class.java))
         finish()
     }

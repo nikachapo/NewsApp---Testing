@@ -13,6 +13,8 @@ import com.epam.newsapp.data.Result
 import com.epam.newsapp.ui.login.models.LoggedInUserView
 import com.epam.newsapp.ui.login.models.LoginFormState
 import com.epam.newsapp.ui.login.models.LoginResult
+import kotlinx.coroutines.CoroutineDispatcher
+import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.ExperimentalCoroutinesApi
 import kotlinx.coroutines.flow.collect
 import kotlinx.coroutines.launch
@@ -20,7 +22,8 @@ import kotlinx.coroutines.launch
 @ExperimentalCoroutinesApi
 class LoginViewModel constructor(
     private val loginRepository: LoginRepository,
-    application: Application
+    application: Application,
+    private val ioDispatcher: CoroutineDispatcher = Dispatchers.IO
 ) : AndroidViewModel(application) {
 
     private val userSession = (getApplication<NewsApplication>()).userSession
@@ -61,7 +64,9 @@ class LoginViewModel constructor(
     }
 
     fun startUserSession() {
-        userSession.startSession()
+        viewModelScope.launch {
+            userSession.startSession()
+        }
     }
 
     private fun isUserNameValid(username: String): Boolean {
@@ -81,7 +86,8 @@ class LoginViewModel constructor(
             if (loginRepository.isLoggedIn()) {
                 loginRepository.user.collect {
                     if (it == null) return@collect
-                    _loginResult.value = LoginResult(success = LoggedInUserView(displayName = it.displayName))
+                    _loginResult.value =
+                        LoginResult(success = LoggedInUserView(displayName = it.displayName))
                 }
             }
         }

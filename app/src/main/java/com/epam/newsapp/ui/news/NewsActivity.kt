@@ -3,9 +3,11 @@ package com.epam.newsapp.ui.news
 import android.os.Bundle
 import android.view.MenuItem
 import android.widget.FrameLayout
+import androidx.lifecycle.lifecycleScope
 import com.epam.newsapp.ui.BaseActivity
 import com.epam.newsapp.R
 import kotlinx.coroutines.ExperimentalCoroutinesApi
+import kotlinx.coroutines.launch
 
 @ExperimentalCoroutinesApi
 class NewsActivity : BaseActivity(R.layout.activity_news) {
@@ -43,7 +45,7 @@ class NewsActivity : BaseActivity(R.layout.activity_news) {
 
     override fun onOptionsItemSelected(item: MenuItem): Boolean {
         if (item.itemId == android.R.id.home) {
-            logOut()
+            lifecycleScope.launch { logOut() }
         }
         return super.onOptionsItemSelected(item)
     }
