@@ -22,11 +22,7 @@ import kotlinx.coroutines.launch
 @ExperimentalCoroutinesApi
 class LoginViewModel constructor(
     private val loginRepository: LoginRepository,
-    application: Application,
-    private val ioDispatcher: CoroutineDispatcher = Dispatchers.IO
-) : AndroidViewModel(application) {
-
-    private val userSession = (getApplication<NewsApplication>()).userSession
+    application: Application) : AndroidViewModel(application) {
 
     private val _loginForm = MutableLiveData<LoginFormState>()
     val loginFormState: LiveData<LoginFormState> = _loginForm
@@ -60,12 +56,6 @@ class LoginViewModel constructor(
             viewModelScope.launch {
                 _loginForm.value = LoginFormState(isDataValid = true)
             }
-        }
-    }
-
-    fun startUserSession() {
-        viewModelScope.launch {
-            userSession.startSession()
         }
     }
 

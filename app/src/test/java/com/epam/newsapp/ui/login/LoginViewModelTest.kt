@@ -23,9 +23,7 @@ class LoginViewModelTest : BaseCoroutinesTest() {
         mockRepo = mock(LoginRepository::class.java)
         loginViewModel = LoginViewModel(
             mockRepo,
-            ApplicationProvider.getApplicationContext(),
-            Dispatchers.Unconfined
-        )
+            ApplicationProvider.getApplicationContext())
     }
 
     @Test

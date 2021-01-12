@@ -19,7 +19,7 @@ class UserSession(
         _userSessionExpired.value = false
         sessionTimeCountJob?.cancel()
 
-        sessionTimeCountJob = GlobalScope.launch {
+        sessionTimeCountJob = launch {
             sharedPreferencesUtil.putString(
                 SharedPreferencesUtil.KEY_TOKEN,
                 java.util.UUID.randomUUID().toString()

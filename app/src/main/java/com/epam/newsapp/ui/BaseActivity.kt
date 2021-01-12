@@ -25,6 +25,9 @@ abstract class BaseActivity(@LayoutRes contentLayoutId: Int) : AppCompatActivity
         super.onCreate(savedInstanceState)
         loginRepository = (application as NewsApplication).loginRepository
         userSession = (application as NewsApplication).userSession
+
+        lifecycleScope.launch { userSession.startSession() }
+
         lifecycleScope.launch {
             loginRepository.user.collect { loggedInUser ->
                 if (loggedInUser != null) {

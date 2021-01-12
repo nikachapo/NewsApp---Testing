@@ -100,7 +100,6 @@ class LoginActivity : AppCompatActivity(R.layout.activity_login) {
     }
 
     private fun onLoginSuccess() {
-        loginViewModel.startUserSession()
         startActivity(Intent(this, NewsActivity::class.java).apply {
             flags = Intent.FLAG_ACTIVITY_CLEAR_TOP or Intent.FLAG_ACTIVITY_SINGLE_TOP
         })
